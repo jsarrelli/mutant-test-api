@@ -1,8 +1,8 @@
 package com.example.mutanttestapi.controllers;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
+import com.example.mutanttestapi.controllers.requests.DNATestRequest;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
@@ -17,57 +17,42 @@ class DNAControllerTests {
     @LocalServerPort
     private int port;
 
+    @Value("${base_url}")
+    private String base_url;
+
     private TestRestTemplate restTemplate = new TestRestTemplate();
     private HttpHeaders headers = new HttpHeaders();
 
     @Test
     void isMutantShouldReturnForbiddenForANonMutant() {
-        JsonObject jsonObject = new JsonObject();
-        JsonArray jsonArray = new JsonArray();
-        jsonArray.add("gktiop");
-        jsonArray.add("giturh");
-        jsonArray.add("fjguto");
-        jsonArray.add("gotplt");
-        jsonArray.add("fjgklt");
-        jsonArray.add("glkotp");
-        jsonObject.add("dna",jsonArray);
-        HttpEntity<String> request = new HttpEntity<String>(jsonObject.toString(), headers);
+        String[] dna = {"gktiop", "giturh", "fjguto", "gotplt", "fjgklt", "glkotp"};
+        DNATestRequest requestBody = new DNATestRequest();
+        requestBody.setDna(dna);
+        HttpEntity<DNATestRequest> request = new HttpEntity<>(requestBody, headers);
 
-        ResponseEntity<String> response = restTemplate.exchange(
+        ResponseEntity response = restTemplate.exchange(
                 createURLWithPort("/mutant"), HttpMethod.POST, request, String.class);
         assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode());
     }
 
     @Test
     void isMutantShouldReturnOkForAMutant() {
-        JsonObject jsonObject = new JsonObject();
-        JsonArray jsonArray = new JsonArray();
-        jsonArray.add("ATGCGA");
-        jsonArray.add("CAGTGC");
-        jsonArray.add("TTATGT");
-        jsonArray.add("AGAAGG");
-        jsonArray.add("CCCCTA");
-        jsonArray.add("TCACTG");
-        jsonObject.add("dna",jsonArray);
-        HttpEntity<String> request = new HttpEntity<String>(jsonObject.toString(), headers);
+        String[] dna = {"ATGCGA", "CAGTGC", "TTATGT", "AGAAGG", "CCCCTA", "TCACTG"};
+        DNATestRequest requestBody = new DNATestRequest();
+        requestBody.setDna(dna);
+        HttpEntity<DNATestRequest> request = new HttpEntity<>(requestBody, headers);
 
-        ResponseEntity<String> response = restTemplate.exchange(
+        ResponseEntity response = restTemplate.exchange(
                 createURLWithPort("/mutant"), HttpMethod.POST, request, String.class);
         assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
     @Test
     void isMutantShouldReturnBadRequestForNonNxNMatrix() {
-        JsonObject jsonObject = new JsonObject();
-        JsonArray jsonArray = new JsonArray();
-        jsonArray.add("ATGCGA");
-        jsonArray.add("CAGTGC");
-        jsonArray.add("TTATGT");
-        jsonArray.add("AGAAG");
-        jsonArray.add("CCCCTA");
-        jsonArray.add("TCACTG");
-        jsonObject.add("dna",jsonArray);
-        HttpEntity<String> request = new HttpEntity<String>(jsonObject.toString(), headers);
+        String[] dna = {"ATGCGA", "CAGTGC", "TTATGT", "AGAAG", "CCCCTA", "TCACTG"};
+        DNATestRequest requestBody = new DNATestRequest();
+        requestBody.setDna(dna);
+        HttpEntity<DNATestRequest> request = new HttpEntity<>(requestBody, headers);
 
         ResponseEntity<String> response = restTemplate.exchange(
                 createURLWithPort("/mutant"), HttpMethod.POST, request, String.class);
@@ -75,7 +60,7 @@ class DNAControllerTests {
     }
 
     private String createURLWithPort(String uri) {
-        return "http://localhost:" + port + uri;
+        return base_url + port + uri;
     }
 
 }
