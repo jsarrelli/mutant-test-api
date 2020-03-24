@@ -1,11 +1,22 @@
 package com.example.mutanttestapi.services;
 
+import com.example.mutanttestapi.models.DnaEntity;
+import com.example.mutanttestapi.models.DnaType;
+import com.example.mutanttestapi.repositories.DnaRepository;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
+
+import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
-class DnaServiceTests {
-    private DNAService dnaService = new DNAService();
+class DnaEntityServiceTest {
+
+    private DnaRepository dnaRepository = mock(DnaRepository.class);
+    private DNAService dnaService = new DNAService(dnaRepository);
 
     @Test
     void checkHorizontalShouldBeOne() {
@@ -90,6 +101,25 @@ class DnaServiceTests {
         String[] dna = {"kgitop", "gktjyk", "gltopt", "lktito", "gmttfs", "dsuwtg"};
         boolean result = dnaService.isMutant(dna);
         assertFalse(result);
+    }
+
+    @Test
+    void countByTypeShouldCount() {
+        when(dnaRepository.countByType(any())).thenReturn((long) 10);
+        assertEquals(10, dnaService.countByType(DnaType.HUMAN));
+    }
+
+    @Test
+    void insertNewDnaShouldSaveDnaEncrypted() {
+        String[] dna = {"d", "n", "a"};
+        DnaType type = DnaType.HUMAN;
+        String hashSequence = DigestUtils.sha256Hex(Arrays.toString(dna));
+        ArgumentCaptor<DnaEntity> argumentCaptor = ArgumentCaptor.forClass(DnaEntity.class);
+        dnaService.insertNewDna(dna, type);
+        verify(dnaRepository, times(1)).save(argumentCaptor.capture());
+        DnaEntity passedEntity = argumentCaptor.getValue();
+        assertEquals(hashSequence, passedEntity.getId());
+        assertEquals(type, passedEntity.getType());
     }
 
 

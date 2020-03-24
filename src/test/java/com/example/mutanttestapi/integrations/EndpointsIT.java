@@ -1,27 +1,18 @@
-package com.example.mutanttestapi.controllers;
+package com.example.mutanttestapi.integrations;
 
+import com.example.mutanttestapi.ApplicationProperties;
 import com.example.mutanttestapi.controllers.requests.DNATestRequest;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class DNAControllerTests {
-
-
-    @LocalServerPort
-    private int port;
-
-    @Value("${base_url}")
-    private String base_url;
+class EndpointsIT {
 
     private TestRestTemplate restTemplate = new TestRestTemplate();
     private HttpHeaders headers = new HttpHeaders();
+    private String baseUrl = ApplicationProperties.INSTANCE.getProperty("base_url");
 
     @Test
     void isMutantShouldReturnForbiddenForANonMutant() {
@@ -60,7 +51,6 @@ class DNAControllerTests {
     }
 
     private String createURLWithPort(String uri) {
-        return base_url + port + uri;
+        return baseUrl.concat(uri);
     }
-
 }

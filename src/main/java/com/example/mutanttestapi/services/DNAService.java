@@ -1,13 +1,23 @@
 package com.example.mutanttestapi.services;
 
+import com.example.mutanttestapi.models.DnaEntity;
+import com.example.mutanttestapi.models.DnaType;
+import com.example.mutanttestapi.repositories.DnaRepository;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Service
 public class DNAService {
+    private final DnaRepository dnaRepository;
     private Pattern pattern = Pattern.compile("([a-z])\\1\\1\\1", Pattern.CASE_INSENSITIVE);
+
+    public DNAService(DnaRepository dnaRepository) {
+        this.dnaRepository = dnaRepository;
+    }
 
     /**
      * For a given dna, returns whether it is mutant or not according to a certain pattern
@@ -15,7 +25,7 @@ public class DNAService {
      * @param dna
      * @return
      */
-   public boolean isMutant(String[] dna) {
+    public boolean isMutant(String[] dna) {
         int numberOfSequences = 0;
         numberOfSequences += checkHorizontal(dna);
         numberOfSequences += checkVertical(dna);
@@ -95,4 +105,13 @@ public class DNAService {
         return numberOfSequences;
     }
 
+    public void insertNewDna(String[] sequence, DnaType type) {
+        String hashSequence = DigestUtils.sha256Hex(Arrays.toString(sequence));
+        DnaEntity dnaEntity = new DnaEntity(hashSequence, type);
+        dnaRepository.save(dnaEntity);
+    }
+
+    public long countByType(DnaType type) {
+        return dnaRepository.countByType(type);
+    }
 }
