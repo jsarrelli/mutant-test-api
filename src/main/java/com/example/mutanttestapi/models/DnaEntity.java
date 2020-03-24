@@ -1,11 +1,8 @@
 package com.example.mutanttestapi.models;
 
 
-import org.apache.commons.codec.digest.DigestUtils;
-
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import java.util.Arrays;
 
 @Entity(name = "dna")
 public class DnaEntity {
