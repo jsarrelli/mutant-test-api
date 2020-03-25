@@ -51,7 +51,7 @@ public class DNAController {
 
         BigDecimal numberOfMutants = new BigDecimal(dnaService.countByType(DnaType.MUTANT));
         BigDecimal numberOfHumans = new BigDecimal(dnaService.countByType(DnaType.HUMAN));
-        BigDecimal ratio = numberOfMutants.divide(numberOfHumans, 3, RoundingMode.CEILING);
+        BigDecimal ratio = numberOfMutants.divide(numberOfHumans, 1, RoundingMode.CEILING);
 
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("count_mutant_dna", numberOfMutants.toBigInteger());
