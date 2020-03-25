@@ -20,63 +20,63 @@ class DnaEntityServiceTest {
 
     @Test
     void checkHorizontalShouldBeOne() {
-        String[] dna = {"aabbee", "cccfdd", "dsfdfs", "laaaal", "peprit", "ytsrht"};
+        String[] dna = {"ATCGGT", "TCGAGT", "TACCCC", "TGACTC", "TCGGCA", "THCAGC"};
         int numberOfSequences = dnaService.checkHorizontal(dna);
         assertEquals(1, numberOfSequences);
     }
 
     @Test
     void checkHorizontalShouldBeTwo() {
-        String[] dna = {"aaeeee", "cccfdd", "dsfdfs", "laaaal", "peprit", "ytsrht"};
+        String[] dna = {"ATCGGT", "TCGAGT", "TACCCC", "TGACTC", "TCGGGG", "THCAGC"};
         int numberOfSequences = dnaService.checkHorizontal(dna);
         assertEquals(2, numberOfSequences);
     }
 
     @Test
     void checkVerticalShouldBeOne() {
-        String[] dna = {"aslgfk", "cccgdd", "dsfgfs", "dlogkj", "pepgit", "ytsght"};
+        String[] dna = {"ATCGGT", "TCGAGG", "TAGCCC", "AGACTC", "TCGGCC", "THCAGC"};
         int numberOfSequences = dnaService.checkVertical(dna);
         assertEquals(1, numberOfSequences);
     }
 
     @Test
     void checkVerticalShouldBeTwo() {
-        String[] dna = {"aslgfk", "cccgdk", "dsfgfk", "dlogkk", "pepgik", "ytsghk"};
+        String[] dna = {"ATCGGT", "TCGAGG", "TAGCCC", "AGGCTC", "TCGGCC", "THCAGC"};
         int numberOfSequences = dnaService.checkVertical(dna);
         assertEquals(2, numberOfSequences);
     }
 
     @Test
     void checkDiagonalShouldBeOne() {
-        String[] dna = {"ABBCKH", "AABCAH", "SAASSF", "AFSAFS", "AFSAFS", "AFSAFS"};
+        String[] dna = {"ATCGGT", "TCCAGT", "TACCCC", "CTCHCC", "THGCAC", "AATHCC"};
         int numberOfSequences = dnaService.checkDiagonal(dna);
         assertEquals(1, numberOfSequences);
     }
 
     @Test
     void checkDiagonalShouldBeTwo() {
-        String[] dna = {"FLFKRN", "ORIUTJ", "SBMBLK", "DSBSDE", "CBSBWE", "DSFSBS"};
+        String[] dna = {"ATCGGT", "TCCAGT", "TGCCCC", "CTCHCC", "TCGGAC", "CATHGC"};
         int numberOfSequences = dnaService.checkDiagonal(dna);
         assertEquals(2, numberOfSequences);
     }
 
     @Test
     void checkDiagonalShouldBeThree() {
-        String[] dna = {"LKIOPG", "KGKGUI", "LJGKKT", "LGKGKT", "GLKTGF", "FKGITG"};
+        String[] dna = {"ATCGGT", "TCCAGT", "TGCCTC", "CTCTCC", "TCTGAC", "CATHGC"};
         int numberOfSequences = dnaService.checkDiagonal(dna);
         assertEquals(3, numberOfSequences);
     }
 
     @Test
     void checkForMutantDnaShouldBeTrue_1() {
-        String[] dna = {"LKGGGG", "KGKGUI", "LJGKKT", "LGKGKT", "GLKTGF", "FKGITG"};
+        String[] dna = {"ATCGAC", "TCGTAC", "TCTGAC", "ATACGA", "TAACGA", "TAAAAG"};
         boolean result = dnaService.isMutant(dna);
         assertTrue(result);
     }
 
     @Test
     void checkForMutantDnaShouldBeTrue_2() {
-        String[] dna = {"GGGGTL", "GLTORP", "TOYJRT", "GPROTT", "GLOYPT", "OYUTIT"};
+        String[] dna = {"ATCGAC", "ACGTAC", "ACTGAC", "ATACGA", "TAACGG", "TAAGAG"};
         boolean result = dnaService.isMutant(dna);
         assertTrue(result);
     }
@@ -84,21 +84,28 @@ class DnaEntityServiceTest {
 
     @Test
     void checkForMutantDnaShouldBeTrue_3() {
-        String[] dna = {"dgdfkt", "gptoyl", "gjllll", "gljpyg", "gotjyo", "goypjm"};
+        String[] dna = {"ATCGAC", "GGGGAC", "ACTGAC", "AAACAC", "TAACGG", "TAAAAG"};
         boolean result = dnaService.isMutant(dna);
         assertTrue(result);
     }
 
     @Test
     void checkForMutantDnaShouldBeFalseForNoSequence() {
-        String[] dna = {"gktiop", "giturh", "fjguto", "gotplt", "fjgklt", "glkotp"};
+        String[] dna = {"ATCGAC", "GGAGAT", "ACTGAC", "AAACAC", "TATCGG", "TAAAGG"};
+        boolean result = dnaService.isMutant(dna);
+        assertFalse(result);
+    }
+
+    @Test
+    void checkForMutantDnaShouldBeFalseForInvalidLetters() {
+        String[] dna = {"LLLLLL", "BBBBBB", "KKKKKK", "WWWWWW", "SSSSSS", "FFFFFF"};
         boolean result = dnaService.isMutant(dna);
         assertFalse(result);
     }
 
     @Test
     void checkForMutantDnaShouldBeFalseForOnlyOneSequence() {
-        String[] dna = {"kgitop", "gktjyk", "gltopt", "lktito", "gmttfs", "dsuwtg"};
+        String[] dna = {"ATCGCC", "GGAGAT", "ACTGAC", "AAACAC", "TATCGG", "AAAAGG"};
         boolean result = dnaService.isMutant(dna);
         assertFalse(result);
     }

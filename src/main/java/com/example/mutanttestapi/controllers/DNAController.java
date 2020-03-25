@@ -30,18 +30,13 @@ public class DNAController {
 
     @PostMapping(path = "/mutant")
     public ResponseEntity isMutant(@RequestBody DNATestRequest requestBody) {
-        logger.info("Mutant testing request received: " + requestBody.getDna().toString());
         String[] dna = requestBody.getDna();
         logger.info("Mutant testing request received: " + Arrays.toString(dna));
 
-        int N = dna.length;
-        for (String sequence : dna) {
-            if (sequence.length() != N)
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "DNA is not a NxN matrix");
-        }
+        performDnaValidations(dna);
         boolean result = dnaService.isMutant(dna);
         DnaType type = result ? DnaType.MUTANT : DnaType.HUMAN;
-        logger.info("Mutant test result:" + Boolean.toString(result) + " for " + Arrays.toString(dna));
+        logger.info("Mutant test result:" + result + " for " + Arrays.toString(dna));
 
         dnaService.insertNewDna(dna, type);
 
@@ -56,7 +51,7 @@ public class DNAController {
 
         BigDecimal numberOfMutants = new BigDecimal(dnaService.countByType(DnaType.MUTANT));
         BigDecimal numberOfHumans = new BigDecimal(dnaService.countByType(DnaType.HUMAN));
-        BigDecimal ratio = numberOfMutants.divide(numberOfHumans, 1, RoundingMode.CEILING);
+        BigDecimal ratio = numberOfMutants.divide(numberOfHumans, 3, RoundingMode.CEILING);
 
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("count_mutant_dna", numberOfMutants.toBigInteger());
@@ -66,4 +61,14 @@ public class DNAController {
     }
 
 
+    private void performDnaValidations(String[] dna) {
+        int N = dna.length;
+        for (String sequence : dna) {
+            if (sequence.length() != N)
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "DNA is not a NxN matrix");
+
+            if (!sequence.matches("^[TCGA]+$"))
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The sequence should contain only [T,C,A,G] letters");
+        }
+    }
 }

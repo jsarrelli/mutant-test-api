@@ -24,13 +24,23 @@ class DnaControllerTest {
 
     @Test
     void isMutantShouldThrowExceptionForANonNxNMatrix() {
-        String[] dna = {"gktiop", "giturh", "fjguto", "gotp", "fjgklt", "glkotp"};
+        String[] dna = {"ATCGGT", "TCGAGT", "TAG", "TGACTC", "TCGGCA", "THCAGC"};
         DNATestRequest requestBody = new DNATestRequest();
         requestBody.setDna(dna);
         assertThrows(ResponseStatusException.class, () -> {
             dnaController.isMutant(requestBody);
         });
 
+    }
+
+    @Test
+    void isMutantShouldThrowExceptionForANonValidBase() {
+        String[] dna = {"ATCGGT", "PPPPPP", "SSSSSS", "TGACTC", "TCGGCA", "THCAGC"};
+        DNATestRequest requestBody = new DNATestRequest();
+        requestBody.setDna(dna);
+        assertThrows(ResponseStatusException.class, () -> {
+            dnaController.isMutant(requestBody);
+        });
     }
 
     @Test

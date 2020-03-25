@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
 @Service
 public class DNAService {
     private final DnaRepository dnaRepository;
-    private Pattern pattern = Pattern.compile("([a-z])\\1\\1\\1", Pattern.CASE_INSENSITIVE);
+    private Pattern pattern = Pattern.compile("([ATCG])\\1\\1\\1");
 
     public DNAService(DnaRepository dnaRepository) {
         this.dnaRepository = dnaRepository;
@@ -22,8 +22,8 @@ public class DNAService {
     /**
      * For a given dna, returns whether it is mutant or not according to a certain pattern
      *
-     * @param dna
-     * @return
+     * @param dna dna solicited
+     * @return true if mutant, false if not
      */
     public boolean isMutant(String[] dna) {
         int numberOfSequences = 0;
@@ -67,6 +67,9 @@ public class DNAService {
 
     /**
      * Return number of diagonal (in both orientations) mutant sequences found in a particular DNA
+     * <p>
+     * The idea here is to perform a scan of the matrix in both orientations(/\) in order to find
+     * the specific sequence.
      *
      * @param dna dna solicited
      * @return number of sequences found
