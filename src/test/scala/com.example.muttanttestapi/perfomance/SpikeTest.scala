@@ -16,7 +16,18 @@ class SpikeTest extends Simulation {
   val baseUrl: String = ApplicationProperties.INSTANCE.getProperty("base_url")
   val httpProtocol: HttpProtocolBuilder = http.baseUrl(baseUrl)
   val gson: Gson = new Gson();
+  val scn: ScenarioBuilder = scenario("spikeTestOnIsMutant")
+    .exec(http("isMutant")
+      .post("/mutant")
+      .check(status in(200, 403))
+      .body(StringBody(_ => createRequest)).asJson
+    )
 
+  private def createRequest = {
+    val dnaTestRequest = new DNATestRequest();
+    dnaTestRequest.setDna(createRandomDna.toArray)
+    gson.toJson(dnaTestRequest);
+  }
 
   private def createRandomDna: List[String] = {
     val possibleValues = "ATCG".toList
@@ -28,19 +39,6 @@ class SpikeTest extends Simulation {
     val matrix = for (_ <- 1 to 6) yield generateRow
     matrix.toList
   }
-
-  private def createRequest = {
-    val dnaTestRequest = new DNATestRequest();
-    dnaTestRequest.setDna(createRandomDna.toArray)
-    gson.toJson(dnaTestRequest);
-  }
-
-  val scn: ScenarioBuilder = scenario("spikeTestOnIsMutant")
-    .exec(http("isMutant")
-      .post("/mutant")
-      .check(status in(200, 403))
-      .body(StringBody(_ => createRequest)).asJson
-    )
   setUp(scn
     .inject(
       constantUsersPerSec(10) during (1 minutes),

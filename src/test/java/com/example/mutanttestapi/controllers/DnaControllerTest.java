@@ -1,7 +1,7 @@
 package com.example.mutanttestapi.controllers;
 
-import com.example.mutanttestapi.requests.DNATestRequest;
 import com.example.mutanttestapi.models.DnaType;
+import com.example.mutanttestapi.requests.DNATestRequest;
 import com.example.mutanttestapi.services.DNAService;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
