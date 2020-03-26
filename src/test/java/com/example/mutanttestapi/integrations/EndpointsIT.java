@@ -16,7 +16,7 @@ class EndpointsIT {
 
     @Test
     void isMutantShouldReturnForbiddenForANonMutant() {
-        String[] dna = {"gktiop", "giturh", "fjguto", "gotplt", "fjgklt", "glkotp"};
+        String[] dna = {"ATCGAC", "GGAGAT", "ACTGAC", "AAACAC", "TATCGG", "TAAAGG"};
         DNATestRequest requestBody = new DNATestRequest();
         requestBody.setDna(dna);
         HttpEntity<DNATestRequest> request = new HttpEntity<>(requestBody, headers);
