@@ -1,7 +1,9 @@
 package com.example.mutanttestapi.controllers;
 
-import com.example.mutanttestapi.controllers.requests.DNATestRequest;
+import com.example.mutanttestapi.exceptions.BadDnaBaseException;
+import com.example.mutanttestapi.exceptions.DnaNotAMatrixException;
 import com.example.mutanttestapi.models.DnaType;
+import com.example.mutanttestapi.requests.DNATestRequest;
 import com.example.mutanttestapi.services.DNAService;
 import com.google.gson.JsonObject;
 import org.slf4j.Logger;
@@ -12,7 +14,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -42,7 +43,6 @@ public class DNAController {
 
         if (result) return ResponseEntity.status(HttpStatus.OK).body("It's a mutant!");
         else return ResponseEntity.status(HttpStatus.FORBIDDEN).body("It's not a mutant");
-
     }
 
     @GetMapping(path = "/stats")
@@ -63,12 +63,10 @@ public class DNAController {
 
     private void performDnaValidations(String[] dna) {
         int N = dna.length;
+        String acceptanceRegexSequence = "^[TCGA]+$";
         for (String sequence : dna) {
-            if (sequence.length() != N)
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "DNA is not a NxN matrix");
-
-            if (!sequence.matches("^[TCGA]+$"))
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The sequence should contain only [T,C,A,G] letters");
+            if (sequence.length() != N) throw new DnaNotAMatrixException();
+            if (!sequence.matches(acceptanceRegexSequence)) throw new BadDnaBaseException();
         }
     }
 }

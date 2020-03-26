@@ -1,7 +1,7 @@
 package com.example.mutanttestapi.integrations;
 
 import com.example.mutanttestapi.ApplicationProperties;
-import com.example.mutanttestapi.controllers.requests.DNATestRequest;
+import com.example.mutanttestapi.requests.DNATestRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.*;

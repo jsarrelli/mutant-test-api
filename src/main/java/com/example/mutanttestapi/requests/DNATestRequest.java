@@ -1,4 +1,4 @@
-package com.example.mutanttestapi.controllers.requests;
+package com.example.mutanttestapi.requests;
 
 public class DNATestRequest {
     private String[] dna;

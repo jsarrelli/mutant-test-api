@@ -2,7 +2,7 @@ package com.example.muttanttestapi.perfomance
 
 
 import com.example.mutanttestapi.ApplicationProperties
-import com.example.mutanttestapi.controllers.requests.DNATestRequest
+import com.example.mutanttestapi.requests.DNATestRequest
 import com.google.gson.Gson
 import io.gatling.core.Predef._
 import io.gatling.core.structure.ScenarioBuilder
@@ -23,7 +23,7 @@ class SpikeTest extends Simulation {
 
     def generateRow = {
       for (_ <- 1 to 6) yield possibleValues(Random.nextInt(possibleValues.size))
-      }.toString
+      }.mkString
 
     val matrix = for (_ <- 1 to 6) yield generateRow
     matrix.toList
@@ -35,15 +35,18 @@ class SpikeTest extends Simulation {
     gson.toJson(dnaTestRequest);
   }
 
-  val scn: ScenarioBuilder = scenario("spikeTestOnIsMutant").exec(
-    http("isMutant")
+  val scn: ScenarioBuilder = scenario("spikeTestOnIsMutant")
+    .exec(http("isMutant")
       .post("/mutant")
+      .check(status in(200, 403))
       .body(StringBody(_ => createRequest)).asJson
-  )
-  setUp(scn.inject(
-    constantUsersPerSec(20) during (1 minutes),
-    constantUsersPerSec(20) during (20 minutes) randomized))
-    .protocols(httpProtocol).assertions(
-    global.responseTime.max.lt(30000),
-  )
+    )
+  setUp(scn
+    .inject(
+      constantUsersPerSec(10) during (1 minutes),
+      constantUsersPerSec(30) during (10 minutes) randomized,
+      constantUsersPerSec(40) during (10 minutes) randomized))
+    .protocols(httpProtocol)
+    .assertions(global.successfulRequests.percent.gte(90))
+
 }
